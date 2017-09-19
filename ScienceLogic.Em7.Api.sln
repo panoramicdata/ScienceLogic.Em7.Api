@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceLogic.Em7.Api", "ScienceLogic.Em7.Api\ScienceLogic.Em7.Api.csproj", "{791B1A7E-A7FB-4509-A3E4-C711AC8B1DD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceLogic.Em7.Api.Test", "ScienceLogic.Em7.Api.Test\ScienceLogic.Em7.Api.Test.csproj", "{5477F6C2-21E5-4EA5-9193-3BE048BA11A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{791B1A7E-A7FB-4509-A3E4-C711AC8B1DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791B1A7E-A7FB-4509-A3E4-C711AC8B1DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791B1A7E-A7FB-4509-A3E4-C711AC8B1DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791B1A7E-A7FB-4509-A3E4-C711AC8B1DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5477F6C2-21E5-4EA5-9193-3BE048BA11A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5477F6C2-21E5-4EA5-9193-3BE048BA11A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5477F6C2-21E5-4EA5-9193-3BE048BA11A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5477F6C2-21E5-4EA5-9193-3BE048BA11A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63B27E42-C24D-4723-9EB2-A48A0294DCD4}
+	EndGlobalSection
+EndGlobal

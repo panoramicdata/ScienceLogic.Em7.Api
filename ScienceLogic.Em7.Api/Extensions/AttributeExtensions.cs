@@ -21,7 +21,7 @@ internal static class AttributeExtensions
 			typeof(EndpointSpecificationAttribute), true
 		).FirstOrDefault() is EndpointSpecificationAttribute dnAttribute))
 		{
-			throw new Exception($"No Path attribute set for class {typeof(T).Name}");
+			throw new InvalidOperationException($"No Path attribute set for class {typeof(T).Name}");
 		}
 		var typeNamespace = typeof(T).Namespace ?? throw new InvalidOperationException($"Type {typeof(T).Name} has no namespace.");
 		var nameSpaceLastText = typeNamespace.Split('.').Last().ToLowerInvariant();

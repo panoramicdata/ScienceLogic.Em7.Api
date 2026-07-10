@@ -9,6 +9,7 @@ public abstract class Query<T>
 	}
 
 	public string SubUri { get; }
+	public Type ResultType => typeof(T);
 }
 
 public sealed class GetQuery<T>(string subUri) : Query<T>(subUri) where T : IdentifiedItem;

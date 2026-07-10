@@ -35,7 +35,10 @@ public sealed class Client : IDisposable
 		_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 	}
 
-	public async Task<Page<T>> GetPage<T>(SkipTakeQuery<T> query, CancellationToken cancellationToken = default)
+	public Task<Page<T>> GetPage<T>(SkipTakeQuery<T> query) where T : IdentifiedItem
+		=> GetPage(query, CancellationToken.None);
+
+	public async Task<Page<T>> GetPage<T>(SkipTakeQuery<T> query, CancellationToken cancellationToken)
 		where T : IdentifiedItem
 	{
 		ArgumentNullException.ThrowIfNull(query);
@@ -43,19 +46,28 @@ public sealed class Client : IDisposable
 		return new Page<T> { Skip = query.Skip, Take = query.Take, Items = items };
 	}
 
-	public Task<T> Get<T>(GetQuery<T> query, CancellationToken cancellationToken = default) where T : IdentifiedItem
+	public Task<T> Get<T>(GetQuery<T> query) where T : IdentifiedItem
+		=> Get(query, CancellationToken.None);
+
+	public Task<T> Get<T>(GetQuery<T> query, CancellationToken cancellationToken) where T : IdentifiedItem
 	{
 		ArgumentNullException.ThrowIfNull(query);
 		return GetResult<T>(query.SubUri, cancellationToken);
 	}
 
-	public Task<List<T>> Get<T>(UnpagedQuery<T> query, CancellationToken cancellationToken = default) where T : IdentifiedItem
+	public Task<List<T>> Get<T>(UnpagedQuery<T> query) where T : IdentifiedItem
+		=> Get(query, CancellationToken.None);
+
+	public Task<List<T>> Get<T>(UnpagedQuery<T> query, CancellationToken cancellationToken) where T : IdentifiedItem
 	{
 		ArgumentNullException.ThrowIfNull(query);
 		return GetResult<List<T>>(query.SubUri, cancellationToken);
 	}
 
-	public Task<T> Get<T>(CancellationToken cancellationToken = default) where T : UnidentifiedItem
+	public Task<T> Get<T>() where T : UnidentifiedItem
+		=> Get<T>(CancellationToken.None);
+
+	public Task<T> Get<T>(CancellationToken cancellationToken) where T : UnidentifiedItem
 		=> GetResult<T>(AttributeExtensions.GetPath<T>(), cancellationToken);
 
 	public void Dispose() => _httpClient.Dispose();

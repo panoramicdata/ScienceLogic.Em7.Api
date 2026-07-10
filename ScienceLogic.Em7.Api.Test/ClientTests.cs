@@ -52,6 +52,9 @@ public sealed class ClientTests
 	private sealed class StubHandler(Func<HttpRequestMessage, HttpResponseMessage> responseFactory) : HttpMessageHandler
 	{
 		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-			=> Task.FromResult(responseFactory(request));
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(responseFactory(request));
+		}
 	}
 }

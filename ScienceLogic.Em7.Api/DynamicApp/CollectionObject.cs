@@ -1,6 +1,5 @@
-﻿namespace ScienceLogic.Em7.Api.DynamicApp
+namespace ScienceLogic.Em7.Api.DynamicApp;
+
+public class CollectionObject
 {
-	public class CollectionObject
-	{
-	}
 }

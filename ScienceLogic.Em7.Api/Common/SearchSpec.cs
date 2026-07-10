@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace ScienceLogic.Em7.Api.Common
+namespace ScienceLogic.Em7.Api.Common;
+
+public class SearchSpec
 {
-	public class SearchSpec
-	{
-		public List<string> Fields { get; set; }
-		public Options Options { get; set; }
-	}
+	public List<string>? Fields { get; set; }
+	public Options? Options { get; set; }
 }

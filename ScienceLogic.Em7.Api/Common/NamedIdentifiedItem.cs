@@ -1,7 +1,6 @@
-﻿namespace ScienceLogic.Em7.Api.Common
+namespace ScienceLogic.Em7.Api.Common;
+
+public class NamedIdentifiedItem : IdentifiedItem
 {
-	public class NamedIdentifiedItem : IdentifiedItem
-	{
-		public string Name { get; set; }
-	}
+	public string? Name { get; set; }
 }

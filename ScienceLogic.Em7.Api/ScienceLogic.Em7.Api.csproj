@@ -1,15 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
+		<NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+		<PackageId>ScienceLogic.Em7.Api</PackageId>
+		<Owners>Panoramic Data Limited</Owners>
+		<PackageProjectUrl>https://github.com/panoramicdata/ScienceLogic.Em7.Api</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/panoramicdata/ScienceLogic.Em7.Api</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>Logo.png</PackageIcon>
+		<Description>.NET 10 client library for the ScienceLogic EM7 API.</Description>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageTags>ScienceLogic;EM7;API;Monitoring;PanoramicData</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DynamicApp\DbPerformance\" />
+		<None Include="Logo.png" Pack="true" PackagePath="" />
+		<None Include="..\README.md" Link="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
-﻿namespace ScienceLogic.Em7.Api.Common
+namespace ScienceLogic.Em7.Api.Common;
+
+public class IdentifiedItem
 {
-	public class IdentifiedItem
-	{
-		public string PpGuid { get; set; }
-	}
+	public string? PpGuid { get; set; }
 }

@@ -1,128 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using ScienceLogic.Em7.Api.Extensions;
-using ScienceLogic.Em7.Api.Exceptions;
+using System.Text;
+using System.Text.Json;
 using ScienceLogic.Em7.Api.Common;
-using Newtonsoft.Json;
+using ScienceLogic.Em7.Api.Exceptions;
+using ScienceLogic.Em7.Api.Extensions;
 
-namespace ScienceLogic.Em7.Api
+namespace ScienceLogic.Em7.Api;
+
+public sealed class Client : IDisposable
 {
-	public class Client : IDisposable
+	private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
+	private readonly HttpClient _httpClient;
+
+	public Client(string server, string username, string password)
+		: this(server, username, password, new HttpClientHandler())
 	{
-		private readonly string _server;
-		private readonly string _release;
-		private readonly string _apiVersion;
-		private readonly string _companyId;
-		private readonly string _publicKey;
-		private readonly HttpClient _httpClient;
+	}
 
-		public Client(string server, string release, string apiVersion, string companyId, string publicKey, string privateKey, string appId)
+	public Client(string server, string username, string password, HttpMessageHandler handler)
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(server);
+		ArgumentException.ThrowIfNullOrWhiteSpace(username);
+		ArgumentNullException.ThrowIfNull(password);
+		ArgumentNullException.ThrowIfNull(handler);
+
+		var authority = server.Contains("://", StringComparison.Ordinal) ? server : $"https://{server}";
+		_httpClient = new HttpClient(handler)
 		{
-			_server = server;
-			_release = release;
-			_apiVersion = apiVersion;
-			_companyId = companyId;
-			_publicKey = publicKey;
-			_httpClient = new HttpClient
-			{
-				BaseAddress = BaseAddress,
-				DefaultRequestHeaders =
-				{
-					Authorization = new AuthenticationHeaderValue("Basic", $"{CompositeUserName}:{privateKey}".Base64Encode()),
-				}
-			};
-			_httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.connectwise.com+json; version=3.0.0");
-			_httpClient.DefaultRequestHeaders.Add("Cookie", $"cw-app-id={appId}");
+			BaseAddress = new Uri($"{authority.TrimEnd('/')}/api/")
+		};
+		var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+		_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+	}
 
+	public async Task<Page<T>> GetPage<T>(SkipTakeQuery<T> query, CancellationToken cancellationToken = default)
+		where T : IdentifiedItem
+	{
+		ArgumentNullException.ThrowIfNull(query);
+		var items = await GetResult<List<T>>(query.SubUri, cancellationToken).ConfigureAwait(false);
+		return new Page<T> { Skip = query.Skip, Take = query.Take, Items = items };
+	}
+
+	public Task<T> Get<T>(GetQuery<T> query, CancellationToken cancellationToken = default) where T : IdentifiedItem
+	{
+		ArgumentNullException.ThrowIfNull(query);
+		return GetResult<T>(query.SubUri, cancellationToken);
+	}
+
+	public Task<List<T>> Get<T>(UnpagedQuery<T> query, CancellationToken cancellationToken = default) where T : IdentifiedItem
+	{
+		ArgumentNullException.ThrowIfNull(query);
+		return GetResult<List<T>>(query.SubUri, cancellationToken);
+	}
+
+	public Task<T> Get<T>(CancellationToken cancellationToken = default) where T : UnidentifiedItem
+		=> GetResult<T>(AttributeExtensions.GetPath<T>(), cancellationToken);
+
+	public void Dispose() => _httpClient.Dispose();
+
+	private async Task<T> GetResult<T>(string requestUri, CancellationToken cancellationToken)
+	{
+		using var response = await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
+		var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+		if (response.StatusCode != HttpStatusCode.OK)
+		{
+			throw new ApiException(response.StatusCode, $"{requestUri} resulted in response:\n{content}");
 		}
 
-		private Uri BaseAddress => new Uri($"https://{_server}/{_release}/apis/{_apiVersion}/");
-
-		private string CompositeUserName => $"{_companyId}+{_publicKey}";
-
-		protected virtual void Dispose(bool disposing)
+		try
 		{
-			if (disposing)
-			{
-				_httpClient.Dispose();
-			}
+			return JsonSerializer.Deserialize<T>(content, SerializerOptions)
+				?? throw new JsonException($"The response could not be converted to {typeof(T).Name}.");
 		}
-
-		public void Dispose()
+		catch (JsonException exception)
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		public async Task<Page<T>> GetPage<T>(SkipTakeQuery<T> query) where T : IdentifiedItem
-		{
-			var response = await _httpClient.GetAsync(query.SubUri);
-			if (response.StatusCode != HttpStatusCode.OK)
-			{
-				throw new ApiException(response.StatusCode, $"{query.SubUri} resulted in response:\n{await response.Content.ReadAsStringAsync()}");
-			}
-			var responseMessage = await response.Content.ReadAsStringAsync();
-			try
-			{
-				var items = Deserialize<List<T>>(responseMessage);
-				return new Page<T>
-				{
-					Skip = query.Skip,
-					Take = query.Take,
-					Items = items
-				};
-			}
-			catch (JsonSerializationException exception)
-			{
-				throw new ApiException(response.StatusCode, $"{exception.Message} when converting the following to List<{typeof(T).Name}>:\n\n{responseMessage.FormatJson()}");
-			}
-		}
-
-		private static T Deserialize<T>(string responseMessage)
-		{
-			return JsonConvert.DeserializeObject<T>(
-				responseMessage,
-				new JsonSerializerSettings
-				{
-#if DEBUG
-					MissingMemberHandling = MissingMemberHandling.Error,
-					// ContractResolver = new RequireObjectPropertiesContractResolver(),
-#endif
-					TypeNameHandling = TypeNameHandling.Auto,
-					// Converters = converters
-				});
-		}
-
-		public async Task<T> Get<T>(GetQuery<T> query) where T : IdentifiedItem
-			=> await Result<T>(query.SubUri);
-
-		public async Task<List<T>> Get<T>(UnpagedQuery<T> query) where T : IdentifiedItem
-			=> await Result<List<T>>(query.SubUri);
-
-		public async Task<T> Get<T>() where T : UnidentifiedItem
-			=> await Result<T>(AttributeExtensions.GetPath<T>());
-
-		private async Task<T> Result<T>(string requestUri)
-		{
-			var response = await _httpClient.GetAsync(requestUri);
-			if (response.StatusCode != HttpStatusCode.OK)
-			{
-				throw new ApiException(response.StatusCode, $"{requestUri} resulted in response:\n{await response.Content.ReadAsStringAsync()}");
-			}
-			var responseMessage = await response.Content.ReadAsStringAsync();
-			try
-			{
-				return Deserialize<T>(responseMessage);
-			}
-			catch (JsonSerializationException exception)
-			{
-				throw new ApiException(response.StatusCode, $"{exception.Message} when converting the following to {typeof(T).Name}:\n\n{responseMessage.FormatJson()}");
-			}
+			throw new ApiException(response.StatusCode, $"{exception.Message} when converting the response to {typeof(T).Name}.", exception);
 		}
 	}
 }
-

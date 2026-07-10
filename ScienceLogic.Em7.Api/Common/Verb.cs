@@ -1,7 +1,6 @@
-﻿namespace ScienceLogic.Em7.Api.Common
+namespace ScienceLogic.Em7.Api.Common;
+
+internal enum Verb
 {
-	internal enum Verb
-	{
-		Get
-	}
+	Get
 }

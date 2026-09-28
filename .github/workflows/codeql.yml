@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with: { fetch-depth: 0 }
-      - uses: github/codeql-action/init@v4
+      - uses: github/codeql-action/init@v4.37.3
         with: { languages: csharp }
       - uses: actions/setup-dotnet@v5
         with: { dotnet-version: '10.0.x' }
       - run: dotnet restore ScienceLogic.Em7.Api.slnx
       - run: dotnet build ScienceLogic.Em7.Api.slnx --no-restore --configuration Release
-      - uses: github/codeql-action/analyze@v4
+      - uses: github/codeql-action/analyze@v4.37.3

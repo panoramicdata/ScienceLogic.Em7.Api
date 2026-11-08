@@ -47,7 +47,26 @@ public sealed class ClientTests
 		Assert.Contains("missing", exception.Message);
 	}
 
+	[Fact]
+	public async Task GetUnidentifiedItemWithoutEndpointSpecificationThrowsBeforeSending()
+	{
+		var sent = false;
+		var handler = new StubHandler(_ =>
+		{
+			sent = true;
+			return new HttpResponseMessage(HttpStatusCode.OK);
+		});
+		using var client = new Client("em7.example.com", "user", "secret", handler);
+
+		var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => client.Get<UnspecifiedItem>(TestContext.Current.CancellationToken));
+
+		Assert.Contains(nameof(UnspecifiedItem), exception.Message);
+		Assert.False(sent);
+	}
+
 	private sealed class TestItem : IdentifiedItem;
+
+	private sealed class UnspecifiedItem : UnidentifiedItem;
 
 	private sealed class StubHandler(Func<HttpRequestMessage, HttpResponseMessage> responseFactory) : HttpMessageHandler
 	{

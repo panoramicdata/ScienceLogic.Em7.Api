@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v7
         with: { fetch-depth: 0 }
       - uses: actions/setup-dotnet@v6
-        with: { dotnet-version: '10.0.x' }
+        with: { dotnet-version: '11.0.x' }
       - run: dotnet restore
       - run: dotnet build --no-restore --configuration Release
       - run: dotnet test --no-build --configuration Release
@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-dotnet@v6
         # The runner user cannot write /usr/share/dotnet, so install the SDK somewhere it can.
         env: { DOTNET_INSTALL_DIR: '${{ runner.temp }}/dotnet' }
-        with: { dotnet-version: '10.0.x' }
+        with: { dotnet-version: '11.0.x' }
       - name: Build tests
         run: dotnet build ScienceLogic.Em7.Api.Test/ScienceLogic.Em7.Api.Test.csproj --configuration Debug
       # The test project is a Microsoft.Testing.Platform application, so coverage is collected by
@@ -83,7 +83,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with: { name: nuget, path: ./artifacts }
       - uses: actions/setup-dotnet@v6
-        with: { dotnet-version: '10.0.x' }
+        with: { dotnet-version: '11.0.x' }
       - uses: NuGet/login@v1
         id: login
         with: { user: david_n_m_bond }

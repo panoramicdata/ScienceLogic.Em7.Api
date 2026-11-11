@@ -52,7 +52,7 @@ jobs:
       # test against a stubbed HttpMessageHandler, so none needs excluding.
       - name: Run tests with coverage
         run: >-
-          ./ScienceLogic.Em7.Api.Test/bin/Debug/net10.0/ScienceLogic.Em7.Api.Test
+          ./ScienceLogic.Em7.Api.Test/bin/Debug/net11.0/ScienceLogic.Em7.Api.Test
           --coverage
           --coverage-settings ${{ github.workspace }}/coverage.config
           --coverage-output-format cobertura
@@ -65,14 +65,14 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ScienceLogic.Em7.Api.Test/bin/Debug/net10.0/TestResults/coverage.cobertura.xml
+          coverage-reports: ScienceLogic.Em7.Api.Test/bin/Debug/net11.0/TestResults/coverage.cobertura.xml
       - name: Upload coverage artifact
         if: always()
         continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: coverage
-          path: ScienceLogic.Em7.Api.Test/bin/Debug/net10.0/TestResults/coverage.cobertura.xml
+          path: ScienceLogic.Em7.Api.Test/bin/Debug/net11.0/TestResults/coverage.cobertura.xml
           retention-days: 7
   publish:
     needs: build

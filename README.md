@@ -5,9 +5,12 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/ScienceLogic.Em7.Api)](https://www.nuget.org/packages/ScienceLogic.Em7.Api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+
+Supports .NET 11.0.
+
 ## Introduction
 
-ScienceLogic.Em7.Api is a .NET 10 client library for querying the ScienceLogic EM7 API with HTTP Basic authentication.
+ScienceLogic.Em7.Api is a .NET 11.0 client library for querying the ScienceLogic EM7 API with HTTP Basic authentication.
 
 ## Installation
 

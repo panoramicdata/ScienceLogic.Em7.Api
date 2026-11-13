@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Logo.png</PackageIcon>
-    <Description>.NET 10 client library for the ScienceLogic EM7 API.</Description>
+    <Description>.NET client library for the ScienceLogic EM7 API.</Description>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
